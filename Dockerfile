@@ -1,10 +1,10 @@
 # 构建阶段
-FROM golang:1.22-alpine AS builder
+FROM golang:alpine AS builder
 
 WORKDIR /app
 
-# 设置构建环境变量
-ENV CGO_ENABLED=1 GOOS=linux GOARCH=amd64
+# 设置构建环境变量（GOTOOLCHAIN=auto 会自动下载需要的 Go 版本）
+ENV CGO_ENABLED=1 GOOS=linux GOARCH=amd64 GOTOOLCHAIN=auto
 
 # 安装必要的构建依赖（SQLite 需要）
 RUN apk add --no-cache gcc musl-dev sqlite-dev
