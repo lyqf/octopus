@@ -1,0 +1,38 @@
+# Git
+.git
+.gitignore
+
+# Build artifacts
+build/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+octopus
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data (will be created at runtime)
+data/
+
+# Documentation
+*.md
+README*.md
+
+# Scripts (not needed in container)
+scripts/
+
+# Docker
+Dockerfile*
+docker-compose.yml
+.dockerignore
