@@ -1,4 +1,24 @@
-# 构建阶段
+########## 前端构建阶段 ##########
+FROM node:20-alpine AS web-builder
+
+WORKDIR /web
+
+# 启用 corepack 以使用 pnpm
+RUN corepack enable
+
+# 拷贝前端依赖文件
+COPY web/package.json web/pnpm-lock.yaml ./
+
+# 安装依赖
+RUN pnpm install --frozen-lockfile
+
+# 拷贝前端源码
+COPY web ./
+
+# 构建前端（生成 out 目录）
+RUN pnpm run build
+
+########## 后端构建阶段 ##########
 FROM golang:1.24-alpine AS builder
 
 WORKDIR /app
@@ -13,11 +33,16 @@ RUN apk add --no-cache gcc musl-dev sqlite-dev
 COPY go.mod go.sum ./
 RUN go mod download
 
-# 拷贝源代码并构建
+# 拷贝后端源代码
 COPY . .
+
+# 从前端构建阶段复制构建产物到 static/out
+COPY --from=web-builder /web/out ./static/out
+
+# 构建 Go 应用（会自动嵌入 static/out 里的前端文件）
 RUN go build -o octopus .
 
-# 运行阶段
+########## 运行阶段 ##########
 FROM alpine:3.20
 
 WORKDIR /app
